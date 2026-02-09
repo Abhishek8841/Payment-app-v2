@@ -1,47 +1,82 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { prisma } from "@repo/db/prisma"
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import DiscordProvider from "next-auth/providers/discord";
-import { prisma } from "@repo/db/prisma"
+import bcrypt from "bcrypt"
 
 export const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma),
     session: { strategy: "jwt" },
     providers: [
         CredentialsProvider({
             name: "credentials",
             credentials: {
-                username: { label: "email", type: "text", placeholder: "JohnDoe" },
+                number: { label: "PhoneNumber", type: "text", placeholder: "JohnDoe" },
                 password: { label: "password", type: "password", placeholder: "Password" },
             },
             async authorize(credentials) {
-                return {
-                    id: "1",
-                    name: "AbhishekBatra",
+                //TODO: ADD ZOD
+                if (!credentials?.number || !credentials?.password) {
+                    return null;
+                }
+                try {
+                    const alreadyExisting = await prisma.user.findFirst(
+                        {
+                            where: {
+                                number: credentials?.number,
+                            }
+                        }
+                    );
+                    if (alreadyExisting) {
+                        if (!(await bcrypt.compare(credentials?.password || "", alreadyExisting.password))) {
+                            return null;
+                        }
+                        return {
+                            id: String(alreadyExisting.id),
+                            // number: alreadyExisting.number,
+                        }
+                    }
+                    let hashedPassword: string;
+                    try {
+                        hashedPassword = await bcrypt.hash(credentials?.password || "", 10);
+                    } catch (e) {
+                        console.log("Unable to hash the password");
+                        return null;
+                    }
+                    const newUser = await prisma.user.create(
+                        {
+                            data: {
+                                number: credentials?.number || "00000000",
+                                password: hashedPassword,
+                            }
+                        }
+                    )
+                    return {
+                        id: String(newUser.id),
+                        number: newUser.number,
+                    }
+
+                } catch (e) {
+                    console.log("Error in authorize function");
+                    return null;
                 }
             },
         }),
-        DiscordProvider({
-            clientId: process.env.DISCORD_CLIENT_ID!,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-        }),
     ],
+    secret: process.env.NEXTAUTH_SECRET || "secret",
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ user, token }) {
             // Runs on sign-in
             if (user) {
+                // user disappears after signin
                 token.id = user.id
             }
-
             return token
         },
-        async session({ session, token }) {
+        async session({ token, session }) {
             if (session.user) {
                 // @ts-ignore
-                session.user.id = token.id as string
+                session.user.id = token.id;
             }
             return session
         },
     },
-    secret: process.env.NEXTAUTH_SECRET,
 }
