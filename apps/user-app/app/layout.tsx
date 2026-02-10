@@ -19,10 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Provider>
-        <AppbarClient />
-        <body className={geist.className}>{children}</body>
-      </Provider>
-    </html>
+      <body className={geist.className}>
+        <Provider>
+          <AppbarClient />
+          {children}
+        </Provider>
+      </body>
+    </html >
   );
 }

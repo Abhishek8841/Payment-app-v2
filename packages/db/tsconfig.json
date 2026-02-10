@@ -7,7 +7,7 @@
     "src",
     "generated"
   ],
-  "exclude": [
+    "exclude": [
     "node_modules",
     "dist"
   ]
