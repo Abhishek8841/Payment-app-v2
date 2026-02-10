@@ -18,4 +18,3 @@ export const SidebarItem = ({ href, title, icon }: { href: string; title: string
         </div>
     </div>
 }
-

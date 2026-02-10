@@ -22,7 +22,7 @@ export async function onRampAction({ amount, provider }: {
                     userId: Number(session?.user.id),
                     token: Math.random().toString(),
                     startTime: new Date(),
-                    amount: Number(amount),
+                    amount: Number(amount) * 100,
                     status: "Processing",
                     provider
                 }
