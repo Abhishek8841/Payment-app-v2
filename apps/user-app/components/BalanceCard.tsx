@@ -19,7 +19,7 @@ export const BalanceCard = ({ amount, locked }: {
             </div>
             <div>
                 {locked / 100} INR
-            </div>
+            </div>   
         </div>
         <div className="flex justify-between border-b border-slate-300 py-2">
             <div>

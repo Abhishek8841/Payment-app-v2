@@ -49,6 +49,15 @@ export const authOptions: NextAuthOptions = {
                             }
                         }
                     )
+                    const balanceWallet = await prisma.balance.create(
+                        {
+                            data: {
+                                amount: 100000,
+                                locked: 0,
+                                userId: newUser.id,
+                            }
+                        }
+                    )
                     return {
                         id: String(newUser.id),
                         number: newUser.number,
@@ -74,7 +83,7 @@ export const authOptions: NextAuthOptions = {
         async session({ token, session }) {
             if (session.user) {
                 // @ts-ignore
-              session.user.id = token.id;
+                session.user.id = token.id;
             }
             return session
         },
