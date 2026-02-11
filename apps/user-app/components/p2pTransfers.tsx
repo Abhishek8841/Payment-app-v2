@@ -32,7 +32,7 @@ export async function P2PTransfers({
                                 INR
                             </div>
                             <div className="flex flex-col justify-between">
-                                <div className="text-red-500 text-xs">
+                                <div className="text-blue-600 font-serif text-xs">
                                     {user_identifier == t.toUserId ? "Recieved" : "Sent"}                               </div>
                                 <div className="text-slate-600 text-xs">
                                     {t.timestamp.toDateString()}

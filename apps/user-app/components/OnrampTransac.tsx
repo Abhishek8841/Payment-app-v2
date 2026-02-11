@@ -29,7 +29,7 @@ export const OnRampTransactions = ({
                                 Received INR
                             </div>
                             <div className="flex flex-col justify-between">
-                                <div className="text-red-500 text-xs">
+                                <div className="text-blue-600 font-serif text-xs">
                                     {t.status}
                                 </div>
                                 <div className="text-slate-600 text-xs">
